@@ -9,6 +9,7 @@ require("express-async-errors");
 app.use(express.json());
 
 const { DataTypes, Sequelize } = require("sequelize");
+const { stack } = require("sequelize/lib/utils");
 const sequelize = new Sequelize(
   "sqlite:" + (process.env.SQLITE || "./db.sqlite3")
 );
@@ -31,6 +32,8 @@ const Todo = sequelize.define("todos", {
   },
 });
 
+sequelize.sync();
+
 sequelize
   .authenticate()
   .then(() => console.log("succesfull"))
@@ -48,4 +51,23 @@ router.get("/todo", async (req, res) => {
 
 router.post("/todo", async (req, res) => {
   const data = await Todo.create(req.body);
+  res.status(201).send({
+    error: false,
+    result: data.dataValues,
+  });
 });
+app.use(router);
+
+const errHandler = (err, req, res, next) => {
+  const errStatusCode = 500;
+  res.status(errStatusCode).send({
+    error: true,
+    msg: err.message,
+    cause: err.cause,
+    stack: err.stack,
+  });
+};
+
+app.use(errHandler);
+
+app.listen(PORT);
