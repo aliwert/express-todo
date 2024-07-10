@@ -48,7 +48,6 @@ router.get("/todo", async (req, res) => {
     result: data,
   });
 });
-
 router.post("/todo", async (req, res) => {
   const data = await Todo.create(req.body);
   res.status(201).send({
@@ -60,13 +59,19 @@ router.delete("/todo", async (req, res) => {
   const todoId = req.body.todoId;
   const data = Todo.destroy({ where: { id: todoId } })
     .then(() => console.log("succesfully deleted"))
-    .catch(() => console.log("error deleted"));
+    .catch(() => console.log("deletion error"));
   res.status(204).send({
     msg: "Succesfully deleted",
   });
 });
-
-router.patch("/todo", async (req, res) => {});
+router.put("/todo", async (req, res) => {
+  const data = await Todo.update(req.body, { where: { id: req.params.id } });
+  res.status(202).send({
+    error: false,
+    result: data,
+    msg: data[0] ? "Update" : "Not update",
+  });
+});
 app.use(router);
 
 const errHandler = (err, req, res, next) => {
