@@ -65,6 +65,8 @@ router.delete("/todo", async (req, res) => {
     msg: "Succesfully deleted",
   });
 });
+
+router.patch("/todo", async (req, res) => {});
 app.use(router);
 
 const errHandler = (err, req, res, next) => {
