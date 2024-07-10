@@ -56,6 +56,15 @@ router.post("/todo", async (req, res) => {
     result: data.dataValues,
   });
 });
+router.delete("/todo", async (req, res) => {
+  const todoId = req.body.todoId;
+  const data = Todo.destroy({ where: { id: todoId } })
+    .then(() => console.log("succesfully deleted"))
+    .catch(() => console.log("error deleted"));
+  res.status(204).send({
+    msg: "Succesfully deleted",
+  });
+});
 app.use(router);
 
 const errHandler = (err, req, res, next) => {
